@@ -17,7 +17,28 @@
         "command": "dsh-for-vscode.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    
+    "contributes": {
+      "viewsContainers": {
+        "activitybar": [
+          {
+            "id": "deepseek-harness-sidebar",
+            "title": "DeepSeek Harness",
+            "icon": "media/icon.svg"
+          }
+        ]
+      },
+      "views": {
+        "deepseek-harness-sidebar": [
+          {
+            "type": "webview",
+            "id": "deepseek.harnessView",
+            "name": "Agent Chat"
+          }
+        ]
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
