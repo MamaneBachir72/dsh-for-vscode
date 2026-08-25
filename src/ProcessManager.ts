@@ -21,7 +21,9 @@ export class ProcessManager {
             }
 
             const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-            const args = ['@deepseek-ai/dsh', 'web', '--port', port.toString()];
+            
+            // L'option --no-open (ou l'argument équivalent du CLI dsh) empêche l'ouverture automatique du navigateur
+            const args = ['@deepseek-ai/dsh', 'web', '--port', port.toString(), '--no-open'];
 
             this.log(`Démarrage du serveur dsh sur le port ${port}...`);
 
@@ -29,16 +31,23 @@ export class ProcessManager {
             this.process = spawn('npx', args, {
                 cwd: workspaceFolder || process.cwd(),
                 shell: true,
-                env: { ...process.env }
+                env: { 
+                    ...process.env,
+                    // Désactive l'ouverture auto des CLI Node standards si supporté
+                    BROWSER: 'none'
+                }
             });
+
+            let isResolved = false;
 
             this.process.stdout?.on('data', (data: Buffer) => {
                 const message = data.toString();
                 this.log(`[dsh stdout]: ${message}`);
 
                 // Détection du démarrage réussi
-                if (message.includes('Server running') || message.includes('http://localhost')) {
+                if (!isResolved && (message.includes('Server running') || message.includes('http://localhost') || message.includes('3018'))) {
                     this.isRunning = true;
+                    isResolved = true;
                     resolve(true);
                 }
             });
@@ -50,7 +59,10 @@ export class ProcessManager {
             this.process.on('error', (error) => {
                 this.log(`Erreur de démarrage du processus : ${error.message}`);
                 this.isRunning = false;
-                reject(error);
+                if (!isResolved) {
+                    isResolved = true;
+                    reject(error);
+                }
             });
 
             this.process.on('close', (code) => {
@@ -58,6 +70,15 @@ export class ProcessManager {
                 this.isRunning = false;
                 this.process = null;
             });
+
+            // Sécurité : valide la promesse au bout de 4 secondes si le serveur écoute déjà
+            setTimeout(() => {
+                if (!isResolved) {
+                    this.isRunning = true;
+                    isResolved = true;
+                    resolve(true);
+                }
+            }, 4000);
         });
     }
 

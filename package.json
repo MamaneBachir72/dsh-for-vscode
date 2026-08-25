@@ -4,40 +4,39 @@
   "description": "transforms VS Code into an AI-augmented software engineering cockpit.",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.134.0"
+    "vscode": "^1.85.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:vscode-deepseek-harness.start"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "dsh-for-vscode.helloWorld",
-        "title": "Hello World"
+        "command": "vscode-deepseek-harness.start",
+        "title": "DeepSeek Harness: Start"
       }
     ],
-    
-    "contributes": {
-      "viewsContainers": {
-        "activitybar": [
-          {
-            "id": "deepseek-harness-sidebar",
-            "title": "DeepSeek Harness",
-            "icon": "media/icon.svg"
-          }
-        ]
-      },
-      "views": {
-        "deepseek-harness-sidebar": [
-          {
-            "type": "webview",
-            "id": "deepseek.harnessView",
-            "name": "Agent Chat"
-          }
-        ]
-      }
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "deepseek-harness-sidebar",
+          "title": "DeepSeek Harness",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "views": {
+      "deepseek-harness-sidebar": [
+        {
+          "type": "webview",
+          "id": "deepseek.harnessView",
+          "name": "Agent Chat"
+        }
+      ]
     }
   },
   "scripts": {
@@ -55,14 +54,14 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.134.0",
+    "@types/vscode": "^1.85.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "24.x",
+    "@types/node": "^20.0.0",
     "typescript-eslint": "^8.61.1",
     "eslint": "^10.5.0",
     "esbuild": "^0.28.1",
     "npm-run-all": "^4.1.5",
-    "typescript": "^6.0.3",
+    "typescript": "^5.0.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0"
   },

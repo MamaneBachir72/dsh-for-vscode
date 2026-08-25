@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
     // 2. Instanciation du ProcessManager
     processManager = new ProcessManager(outputChannel);
 
-	// 3. Enregistrement du Webview Provider pour la Sidebar
+    // 3. Enregistrement du Webview Provider pour la Sidebar
     const provider = new HarnessWebviewProvider(context.extensionUri, 3018);
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(HarnessWebviewProvider.viewType, provider)
@@ -23,6 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
         try {
             await processManager?.start();
             vscode.window.showInformationMessage('DeepSeek Harness démarré avec succès !');
+
+            // Ouvre et focalise automatiquement la vue latérale intégrée dans VS Code
+            await vscode.commands.executeCommand('deepseek.harnessView.focus');
         } catch (err) {
             vscode.window.showErrorMessage('Échec du démarrage de DeepSeek Harness.');
         }
